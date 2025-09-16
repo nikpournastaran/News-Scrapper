@@ -1,3 +1,3 @@
-from database import create_table
-if __name__ == "__main__":
+from database1 import create_table
+if __name__ == "__main1__":
     create_table
