@@ -14,8 +14,7 @@ def scrape_ap_news():
         
         soup = BeautifulSoup(response.content, 'html.parser')
         
-        # This part of the code may need to be adjusted if the website's HTML changes.
-        # It's designed to find news articles.
+        
         articles = soup.find_all('div', class_='Card')
         
         conn = connect_db()
