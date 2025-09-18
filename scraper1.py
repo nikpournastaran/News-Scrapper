@@ -36,7 +36,7 @@ def scrape_ap_news():
                             short_text_tag = article.find('p', class_='Body')
                             short_text = short_text_tag.get_text().strip() if short_text_tag else None
                             
-                            # Check for duplicates before inserting
+                            #Check for duplicates before inserting
                             cursor.execute("SELECT news_url FROM news WHERE news_url = ?", (news_url,))
                             if cursor.fetchone() is None:
                                 cursor.execute("""
@@ -51,7 +51,6 @@ def scrape_ap_news():
                 except Exception as e:
                     print(f"Error processing article: {e}")
                     continue
-
             conn.close()
     
     except requests.exceptions.RequestException as e:
