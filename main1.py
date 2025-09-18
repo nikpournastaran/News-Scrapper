@@ -1,5 +1,5 @@
 import os
-from database1 import create_table
+from Service.database1 import create_table
 
 #create database
 if __name__ == "_main1_":

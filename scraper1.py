@@ -1,8 +1,9 @@
 import requests 
 from bs4 import BeautifulSoup
 import sqlite3
-from database1 import connect_db
-
+from Service.database1 import connect_db
+import sqlite3
+import os
 
 #Scrapes news from apnews.com and stores them in the database
 def scrape_ap_news():
