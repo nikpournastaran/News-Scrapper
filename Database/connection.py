@@ -1,37 +1,36 @@
-DATABASE_NAME = "news_database.db"
+import sqlite3
+from ..config import DATABASE_NAME
 
-#Connects to the SQLite database
-def connect_db():
 
-    conn = sqlite3.connect(os.path.join(os.getcwd(), DATABASE_NAME))
-    return conn
-   
-#Creates the 'news' table
-def create_table():
-   
-    conn = connect_db()
+#connection to database
+def get_db_connection():
+    
+    try:
+        conn = sqlite3.connect(DATABASE_NAME)
+        #with colomn names
+        conn.row_factory = sqlite3.Row  
+        return conn
+    except sqlite3.Error as e:
+        print(f"Error connecting to database: {e}")
+        return None
+
+#create table if doesnt exist
+def initialize_database():
+    
+    conn = get_db_connection()
     if conn:
-        try:
-            cursor = conn.cursor()
-            cursor.execute("""
-                CREATE TABLE IF NOT EXISTS news (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    title TEXT NOT NULL,
-                    short_text TEXT,
-                    image_url TEXT,
-                    news_url TEXT NOT NULL UNIQUE,
-                    is_active INTEGER DEFAULT 1,
-                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-                )
-            """)
-            conn.commit()
-            print("Database and 'news' table created successfully.")
-            return True
-        except sqlite3.Error as e:
-            print(f"Error creating table: {e}")
-        finally:
-            conn.close()
-    else:
-        print("Could not connect to database.")
-        return False
+        cursor = conn.cursor()
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS news (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                title TEXT NOT NULL,
+                short_text TEXT,
+                image_link TEXT,
+                news_link TEXT UNIQUE NOT NULL,
+                scraped_at TEXT,
+                is_active INTEGER DEFAULT 1
+            )
+        ''')
+        conn.commit()
+        conn.close()
+        print("Database initialized successfully.")

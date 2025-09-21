@@ -1,61 +1,44 @@
-import requests 
+import requests
 from bs4 import BeautifulSoup
-import sqlite3
-from Service.database1 import connect_db
-import sqlite3
-import os
+import datetime
 
-#Scrapes news from apnews.com and stores them in the database
-def scrape_ap_news():
-    
-    url = "https://apnews.com/"
+#scrape news
+def scrape_news_site(url):
+   
+    news_list = []
     try:
         response = requests.get(url)
         response.raise_for_status() 
-        
-        soup = BeautifulSoup(response.content, 'html.parser')
-        
-        
-        articles = soup.find_all('div', class_='Card')
-        
-        conn = connect_db()
-        if conn:
-            cursor = conn.cursor()
-            
-            for article in articles:
-                try:
-                    title_tag = article.find('h2', class_='CardHeadline')
-                    if title_tag:
-                        title = title_tag.get_text().strip()
-                        news_url_tag = article.find('a', class_='Link')
-                        if news_url_tag:
-                            news_url = "https://apnews.com" + news_url_tag.get('href')
-                            
-                            image_tag = article.find('img', class_='ResponsiveImage')
-                            image_url = image_tag.get('src') if image_tag else None
+        soup = BeautifulSoup(response.text, 'html.parser')
 
-                            short_text_tag = article.find('p', class_='Body')
-                            short_text = short_text_tag.get_text().strip() if short_text_tag else None
-                            
-                            #Check for duplicates before inserting
-                            cursor.execute("SELECT news_url FROM news WHERE news_url = ?", (news_url,))
-                            if cursor.fetchone() is None:
-                                cursor.execute("""
-                                    INSERT INTO news (title, short_text, image_url, news_url)
-                                    VALUES (?, ?, ?, ?)
-                                """, (title, short_text, image_url, news_url))
-                                conn.commit()
-                                print(f"Added new article: {title}")
-                            else:
-                                print(f"Article already exists: {title}")
-                            
-                except Exception as e:
-                    print(f"Error processing article: {e}")
-                    continue
-            conn.close()
-    
+        # مثال: پیدا کردن تمام بخش‌های خبری
+        # توجه: این قسمت باید بر اساس ساختار HTML سایت مورد نظر شما تغییر کند.
+        # از ابزارهای توسعه‌دهنده مرورگر (F12) برای پیدا کردن تگ‌ها و کلاس‌ها استفاده کنید.
+        news_items = soup.find_all('article', class_='news-item')
+
+        for item in news_items:
+            try:
+                title = item.find('h2').text.strip()
+                short_text = item.find('p', class_='summary').text.strip()
+                image_link = item.find('img')['src']
+                news_link = item.find('a')['href']
+                
+                # create dics from news
+                news_data = {
+                    'title': title,
+                    'short_text': short_text,
+                    'image_link': image_link,
+                    'news_link': news_link,
+                    'scraped_at': datetime.datetime.now().isoformat(),
+                    'is_active': 1
+                }
+                news_list.append(news_data)
+            except (AttributeError, TypeError) as e:
+                print(f"Skipping a news item due to missing element: {e}")
+                continue
+
     except requests.exceptions.RequestException as e:
-        print(f"Error making request to {url}: {e}")
+        print(f"Error during web request: {e}")
+        return []
 
-if __name__ == "_main_":
-    scrape_ap_news()
+    return news_list
