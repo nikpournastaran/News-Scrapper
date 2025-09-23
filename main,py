@@ -5,19 +5,19 @@ from services.news_service import run_scraper_job, get_20_latest_news, search_ne
 import time
 
 def main():
-    # مرحله ۱: راه‌اندازی دیتابیس
+    # step 1 (database)
     initialize_database()
 
-    # مرحله ۲: اجرای یکباره اسکرپر
+    # step2 (scraper)
     run_scraper_job()
     
-    # مرحله ۳: نمایش ۲۰ خبر آخر
+    # step3 (show 20 latest news)
     print("\n--- 20 Latest News ---")
     latest_news = get_20_latest_news()
     for news in latest_news:
         print(f"ID: {news['id']}, Title: {news['title']}")
 
-    # مرحله ۴: جستجو در اخبار
+    # step4 (search in news)
     print("\n--- Search Results for 'tech' ---")
     search_results = search_news_by_query('tech')
     for news in search_results:
