@@ -1,19 +1,19 @@
+# scraper/core.py
+
 import requests
 from bs4 import BeautifulSoup
-import datetime
 
-#scrape news
+# scrape news
 def scrape_news_site(url):
-   
     news_list = []
     try:
         response = requests.get(url)
         response.raise_for_status() 
         soup = BeautifulSoup(response.text, 'html.parser')
-
-        # مثال: پیدا کردن تمام بخش‌های خبری
-        # توجه: این قسمت باید بر اساس ساختار HTML سایت مورد نظر شما تغییر کند.
-        # از ابزارهای توسعه‌دهنده مرورگر (F12) برای پیدا کردن تگ‌ها و کلاس‌ها استفاده کنید.
+        
+        # Example: Find all news sections
+        # Note: This part should be changed based on the HTML structure of your target site.
+        # Use browser developer tools (F12) to find the correct tags and classes.
         news_items = soup.find_all('article', class_='news-item')
 
         for item in news_items:
@@ -23,22 +23,20 @@ def scrape_news_site(url):
                 image_link = item.find('img')['src']
                 news_link = item.find('a')['href']
                 
-                # create dics from news
+                # create a dictionary from news without extra fields
                 news_data = {
                     'title': title,
                     'short_text': short_text,
                     'image_link': image_link,
-                    'news_link': news_link,
-                    'scraped_at': datetime.datetime.now().isoformat(),
-                    'is_active': 1
+                    'news_link': news_link
                 }
                 news_list.append(news_data)
             except (AttributeError, TypeError) as e:
-                print(f"Skipping a news item due to missing element: {e}")
+                print(f"Skipping a news item due to a missing element: {e}")
                 continue
 
     except requests.exceptions.RequestException as e:
         print(f"Error during web request: {e}")
         return []
 
-    return news_list
+    return news_list
