@@ -12,3 +12,7 @@ Prerequisites
 Before you begin, ensure the following software is installed on your system:
 • Python 3.x
 • pip (Python package installer)
+
+pip install -r requirements.txt
+git clone
+
