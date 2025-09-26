@@ -10,9 +10,9 @@ Key Features
 • Automated Scheduling: (Optional) The scraper can be scheduled to run automatically at set intervals (e.g., every minute) to keep the data fresh.
 Prerequisites
 Before you begin, ensure the following software is installed on your system:
-• Python 3.x
-• pip (Python package installer)
 
+Python 3.x
+pip (Python package installer)
 pip install -r requirements.txt
 git clone
 
